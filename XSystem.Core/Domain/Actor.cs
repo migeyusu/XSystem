@@ -16,8 +16,21 @@ namespace XSystem.Core.Domain
 
         /// <summary>
         /// 可抓取该actor对应的film的search url
+        /// 由于searchurl往往以一定规则生成，所以不持久化
         /// </summary>
-        public string FilmSearchUrl { get; set; }
+        [NotMapped]
+        public string FilmSearchUrl {
+            get {
+                switch (Region) {
+                    case Region.Dmm:
+                        return $"http://www.dmm.co.jp/mono/dvd/-/actress/=/keyword={Code}/";
+                    case Region.Mgs:
+                        return null;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
 
         /// <summary>
         /// 指示源url，可能来源于不同类型的页面（同类型页面或来自其他类型）
@@ -28,6 +41,11 @@ namespace XSystem.Core.Domain
         /// dmm的actor search id
         /// </summary>
         public int Code { get; set; }
+
+        /// <summary>
+        /// 抓取域,指示在哪个网站抓取
+        /// </summary>
+        public Region Region { get; set; }
 
         /// <summary>
         /// 表示已抓取过，如果在抓取过程中网络异常不会完成

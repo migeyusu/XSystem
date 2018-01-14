@@ -23,6 +23,8 @@ namespace XSystem.Core.Domain
 
         public string Characteristic { get; set; }
 
+        public Region Region { get; set; }
+
         /// <summary>
         /// 来源页面
         /// </summary>

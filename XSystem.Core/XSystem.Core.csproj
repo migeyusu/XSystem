@@ -92,6 +92,7 @@
     <Compile Include="Domain\Actor.cs" />
     <Compile Include="Domain\FetchErrorPage.cs" />
     <Compile Include="Domain\RecommendLevel.cs" />
+    <Compile Include="Domain\Region.cs" />
     <Compile Include="Domain\ReptileHistory.cs" />
     <Compile Include="Infrastructure\Deploy.cs" />
     <Compile Include="Domain\Film.cs" />
@@ -153,6 +154,18 @@
     <Compile Include="Migrations\201801111514572_AddSourceUrl.Designer.cs">
       <DependentUpon>201801111514572_AddSourceUrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801140556551_AddSeperationFetchProperty.cs" />
+    <Compile Include="Migrations\201801140556551_AddSeperationFetchProperty.Designer.cs">
+      <DependentUpon>201801140556551_AddSeperationFetchProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801140755215_AddSeperationFetchProperty2.cs" />
+    <Compile Include="Migrations\201801140755215_AddSeperationFetchProperty2.Designer.cs">
+      <DependentUpon>201801140755215_AddSeperationFetchProperty2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801140908192_RemoveDistinctProperties.cs" />
+    <Compile Include="Migrations\201801140908192_RemoveDistinctProperties.Designer.cs">
+      <DependentUpon>201801140908192_RemoveDistinctProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -199,6 +212,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801111514572_AddSourceUrl.resx">
       <DependentUpon>201801111514572_AddSourceUrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801140556551_AddSeperationFetchProperty.resx">
+      <DependentUpon>201801140556551_AddSeperationFetchProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801140755215_AddSeperationFetchProperty2.resx">
+      <DependentUpon>201801140755215_AddSeperationFetchProperty2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801140908192_RemoveDistinctProperties.resx">
+      <DependentUpon>201801140908192_RemoveDistinctProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

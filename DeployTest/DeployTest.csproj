@@ -145,7 +145,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PageDecode.cs" />
+    <Compile Include="Service\DmmReptile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

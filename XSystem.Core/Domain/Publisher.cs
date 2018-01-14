@@ -16,6 +16,8 @@ namespace XSystem.Core.Domain
     {
         public virtual List<Series> Series { get; set; }
 
+        public Region Region { get; set; }
+
         private readonly object _serieslocker = new object();
 
         public Publisher()

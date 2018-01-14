@@ -26,7 +26,7 @@ namespace XSystem.Core.Infrastructure
 
         public void Delete(T x)
         {
-            if (_context.Entry(x).State==EntityState.Detached) {
+            if (_context.Entry(x).State == EntityState.Detached) {
                 _dbSet.Attach(x);
             }
             _dbSet.Remove(x);
