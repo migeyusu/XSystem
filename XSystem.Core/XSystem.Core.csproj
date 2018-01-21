@@ -166,6 +166,22 @@
     <Compile Include="Migrations\201801140908192_RemoveDistinctProperties.Designer.cs">
       <DependentUpon>201801140908192_RemoveDistinctProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801181250331_RemoveFilmShotUrl.cs" />
+    <Compile Include="Migrations\201801181250331_RemoveFilmShotUrl.Designer.cs">
+      <DependentUpon>201801181250331_RemoveFilmShotUrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801181253062_RemoveFilmDetailUrl.cs" />
+    <Compile Include="Migrations\201801181253062_RemoveFilmDetailUrl.Designer.cs">
+      <DependentUpon>201801181253062_RemoveFilmDetailUrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801181422489_AddErrorCode.cs" />
+    <Compile Include="Migrations\201801181422489_AddErrorCode.Designer.cs">
+      <DependentUpon>201801181422489_AddErrorCode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801201256252_RemovedUrl.cs" />
+    <Compile Include="Migrations\201801201256252_RemovedUrl.Designer.cs">
+      <DependentUpon>201801201256252_RemovedUrl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -221,6 +237,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801140908192_RemoveDistinctProperties.resx">
       <DependentUpon>201801140908192_RemoveDistinctProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801181250331_RemoveFilmShotUrl.resx">
+      <DependentUpon>201801181250331_RemoveFilmShotUrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801181253062_RemoveFilmDetailUrl.resx">
+      <DependentUpon>201801181253062_RemoveFilmDetailUrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801181422489_AddErrorCode.resx">
+      <DependentUpon>201801181422489_AddErrorCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801201256252_RemovedUrl.resx">
+      <DependentUpon>201801201256252_RemovedUrl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

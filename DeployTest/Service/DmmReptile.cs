@@ -1,16 +1,18 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Reptile;
 using XSystem.Core.Domain;
 using XSystem.Core.Infrastructure;
 
-namespace DeployTest.Service {
-
+namespace DeployTest.Service
+{
     /* 抓取流：抓取所有actors
     * 依据actor获得film列表，并打上标记和更新日期
     * 依据film的detail更新series和Publisher
@@ -18,16 +20,8 @@ namespace DeployTest.Service {
     * 然后对检查每个actor的新的film
     */
 
-    public class DmmReptile
+    public class DmmReptile : VisionReptile
     {
-        public Region Region = Region.Dmm;
-
-        public const string UndefinedSeries = "UndefinedSeries";
-
-        public const string UndefinedActor = "UndefinedActor";
-
-        public const string UndefinedPublisher = "UndefinedPublisher";
-
         private readonly Regex _dmmmakerRegex =
             new Regex(@"<a href=""/mono/dvd/-/list/=/article=maker/id=[0-9]+?/"">(.+?)</a>");
 
@@ -57,16 +51,6 @@ namespace DeployTest.Service {
                     @"<li><a href=""(/mono/dvd/-/list/=/article=actress/id=[0-9]+?/)""><img src=""(http://pics.dmm.co.jp/mono/actjpgs/medium/\w+?.jpg)"" alt="""" width=""100"" height=""100""><br>(.+?)</a></li>")
             ;
 
-        private readonly FilmContext _context;
-        
-        //全局的model来源，使用IQueryable接口提高性能
-        public IQueryable<Actor> Actors => _context.Actors.Where(actor => actor.Region == Region);
-
-        public IQueryable<Film> Films => _context.Films.Where(film => film.Region == Region);
-
-        public IQueryable<Publisher> Publishers => _context.Publishers.Where(
-            publisher => publisher.Region == Region);
-
         #region actorsinitial
 
         private volatile bool _actorlistpagesdecoded = false;
@@ -74,13 +58,11 @@ namespace DeployTest.Service {
         //需要生成url集合的子种子页面
         private readonly ConcurrentBag<string> _accomplishedactordic = new ConcurrentBag<string>();
 
-        public DmmReptile(FilmContext context)
+        public DmmReptile(IPersistence persistence) :
+            base(persistence)
         {
-            _context = context;
-            _context.Configuration.AutoDetectChangesEnabled = false;
+            Region = Region.Dmm;
         }
-
-        public ConcurrentBag<Actor> FetchedNewActors { get; set; } = new ConcurrentBag<Actor>();
 
         private void ActorParse(Page page, ReptileContext context)
         {
@@ -130,34 +112,18 @@ namespace DeployTest.Service {
                 return;
             }
         }
-        
-        public void ActorsGrab()
+
+        public void ActorsGrabAsync(Action endCallback = null)
         {
-            var reptileProcessor = new ReptileProcessor(ActorParse, 4,2,
-                () => new[] { "http://www.dmm.co.jp/mono/dvd/-/actress/=/keyword=a/" });
-            reptileProcessor.InnerEnd += () =>
-            {
-                Console.WriteLine($"actors collected,{reptileProcessor.ErrorUrl.Count} error urls");
-                using (var filmContext = new FilmContext())
-                {
-                    filmContext.Configuration.AutoDetectChangesEnabled = false;
-                    filmContext.Actors.AddRange(FetchedNewActors);
-                    filmContext.ReptileHistories.Add(new ReptileHistory()
-                    {
-                        DateTime = DateTime.Now,
-                        ErrorPages = reptileProcessor.ErrorUrl
-                            .Select(page => FetchErrorPage.Create(page.Url, page.Exception))
-                            .ToList()
-                    });
-                    filmContext.Configuration.AutoDetectChangesEnabled = true;
-                    filmContext.SaveChanges();
-                }
-                Console.WriteLine("actors saved");
+            Processor = new ReptileProcessor(ActorParse, 4, 2,
+                () => new[] {"http://www.dmm.co.jp/mono/dvd/-/actress/=/keyword=a/"});
+            Processor.PipeEmptied += () => {
+                Processor.Stop();
+                Persistence.Save(this);
+                Processor.Dispose();
+                endCallback?.Invoke();
             };
-            reptileProcessor.Start();
-            var readLine = Console.ReadLine();
-            Console.WriteLine(readLine);
-            reptileProcessor.Dispose();
+            Processor.Start();
         }
 
         #endregion
@@ -174,25 +140,23 @@ namespace DeployTest.Service {
             }
         }
 
-        public ConcurrentBag<Publisher> FetchedNewPublishers { get; set; } = new ConcurrentBag<Publisher>();
-
-        public ConcurrentBag<Film> FetchedNewFilms { get; set; } = new ConcurrentBag<Film>();
+        #region filmsgrab
 
         /// <summary>
         /// 存放待搜索的actors的搜索URL
         /// </summary>
-        public ConcurrentBag<string> SeedFetchUrls { get; set; }
+        private ConcurrentBag<string> SeedFetchUrls { get; set; }
 
-        public ConcurrentDictionary<int, Actor> AllActorsDictionary { get; set; } =
+        private ConcurrentDictionary<int, Actor> AllActorsDictionary { get; set; } =
             new ConcurrentDictionary<int, Actor>();
 
-        public ConcurrentDictionary<string, Publisher> AllPublishersDictionary { get; set; } =
+        private ConcurrentDictionary<string, Publisher> AllPublishersDictionary { get; set; } =
             new ConcurrentDictionary<string, Publisher>();
 
         /// <summary>
         /// key:code because code is smaller
         /// </summary>
-        public ConcurrentDictionary<string, Film> AllFilms { get; set; } = new ConcurrentDictionary<string, Film>();
+        private ConcurrentDictionary<string, Film> AllFilms { get; set; } = new ConcurrentDictionary<string, Film>();
 
         /// <summary>
         /// 列表模式获取film，film可能重复，也可能有新的actor，所以这个方法兼具更新的特性
@@ -211,7 +175,7 @@ namespace DeployTest.Service {
                     .Cast<Match>()
                     .Select(match => match.Groups[1].Value)
                     //利用并发集合测试film重复性并预先占位，在详情页进行update
-                    .Where(s => AllFilms.TryAdd(s,null))
+                    .Where(s => AllFilms.TryAdd(s, null))
                     .Select(s => $"http://www.dmm.co.jp/mono/dvd/-/detail/=/cid={s}/");
                 foreach (var s in filmItemsUrl) {
                     context.AddUrl(s);
@@ -245,6 +209,7 @@ namespace DeployTest.Service {
                                 Code = actorId,
                                 Name = match.Groups[2].Value,
                                 SourceUrl = page.Url,
+                                Region = Region,
                                 LastUpdateTime = DateTime.Now,
                             };
                             FetchedNewActors.Add(actor);
@@ -252,7 +217,7 @@ namespace DeployTest.Service {
                         });
                     });
 
-                var substring = page.Url.Substring(45, page.Url.Length - 45 - 1);
+                var codSubstring = page.Url.Substring(45, page.Url.Length - 45 - 1);
                 var groupValue = _dmmGroupRegex.Match(page.Content).Groups[1].Value;
                 var matchCollection = _dmmCharaRegex.Matches(groupValue).Cast<Match>()
                     .Select((match => match.Groups[1].Value));
@@ -261,15 +226,14 @@ namespace DeployTest.Service {
                     stringBuilder.Append(s);
                     stringBuilder.Append("\r\n");
                 }
-                var film = new Film() {
+                var film = new Film {
                     Name = nameValue,
-                    Code = substring,
-                    ImageUrl = $"https://pics.dmm.co.jp/mono/movie/adult/{substring}/{substring}ps.jpg",
-                    ShotTag = substring,
+                    Code = codSubstring,
                     Characteristic = stringBuilder.ToString(),
                     Actors = currentactors.ToList(),
                     Series = series,
-                    SourceUrl = page.Url
+                    Region = Region,
+                    LastUpdateTime = DateTime.Now
                 };
                 series.AddFilm(film);
                 foreach (var actor in currentactors) {
@@ -281,61 +245,65 @@ namespace DeployTest.Service {
             }
         }
 
-        public void FilmsGrab(int count)
-        {
-            var context = new FilmContext();
-            context.Configuration.AutoDetectChangesEnabled = false;
-            var allactors = context.Actors.ToList();
-            var fetchactors = allactors
-                .Where(actor => actor.IsInitialAccomplish == false)
-                .Take(count);
-            var starturls = fetchactors.Select(actor => actor.FilmSearchUrl);
+        private const int interval = 10;
 
-            this.SeedFetchUrls = new ConcurrentBag<string>(starturls);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="endCallback"></param>
+        public void FilmsGrabAsync(Action endCallback = null)
+        {
             this.AllPublishersDictionary = new ConcurrentDictionary<string, Publisher>(
-                context.Publishers
+                AvailablePublishers
                     .ToList()
                     .Select(
                         publisher => new KeyValuePair<string, Publisher>(publisher.Name, publisher)));
             this.AllActorsDictionary = new ConcurrentDictionary<int, Actor>(
-                allactors
+                AvailableActors
+                    .ToList()
                     .Select(actor => new KeyValuePair<int, Actor>(actor.Code, actor)));
             this.AllFilms = new ConcurrentDictionary<string, Film>(
-                context.Films
+                AvailableFilms
                     .ToList()
                     .Select(film => new KeyValuePair<string, Film>(film.Code, film)));
-
-            var reptileProcessor = new ReptileProcessor(FilmsParse, 4, 2,
-                () => starturls);
-
-            reptileProcessor.InnerEnd += () => {
-                reptileProcessor.Stop();
-                Thread.Sleep(1000);
-                Console.WriteLine(
-                    $"{AllFilms.Count}film result collected,{reptileProcessor.ErrorUrl.Count} error urls" +
-                    $"fetch spent {reptileProcessor.FetchSpentTime} ms,decode spent {reptileProcessor.DecodeSpentTime} ms");
-                foreach (var actor in fetchactors) {
-                    actor.IsInitialAccomplish = true;
-                }
-                context.Films.AddRange(FetchedNewFilms);
-                context.Actors.AddRange(FetchedNewActors);
-                context.Publishers.AddRange(FetchedNewPublishers);
-                context.Configuration.AutoDetectChangesEnabled = true;
-                context.SaveChanges();
-                context.ReptileHistories.Add(new ReptileHistory {
-                    DateTime = DateTime.Now,
-                    ErrorPages = reptileProcessor.ErrorUrl
-                        .Select((page => FetchErrorPage.Create(page.Url,page.Exception)))
-                        .ToList()
-                });
-                context.SaveChanges();
-                Console.WriteLine("result save");
-            };
-            reptileProcessor.Start();
-            var readLine = Console.ReadLine();
-            Console.WriteLine(readLine);
-            reptileProcessor.Dispose();
-            context.Dispose();
+            Task.Run(() => {
+                var autoResetEvent = new AutoResetEvent(false);
+                IEnumerable<Actor> needFetchActors = AvailableActors
+                    .Where(actor => actor.IsInitialAccomplish == false)
+                    .Take(interval);
+                var fetch = true;
+                while(needFetchActors.Any()&&fetch) {
+                    Console.WriteLine($"ready to fetch");
+                    var starturls = needFetchActors.Select(actor => actor.FilmSearchUrl);
+                    this.SeedFetchUrls = new ConcurrentBag<string>(starturls);
+                    Processor = new ReptileProcessor(FilmsParse, 6, 3,
+                        () => starturls);
+                    Processor.PipeEmptied += () => {
+                        Processor.Stop();
+                        if (Processor.ErrorUrl.Count >= 5) {
+                            Console.WriteLine("a mount of errors!");
+                            fetch = false;
+                            return;
+                        }
+                        foreach (var actor in needFetchActors) {
+                            actor.IsInitialAccomplish = true;
+                            actor.LastUpdateTime = DateTime.Now;
+                        }
+                        Persistence.Save(this);
+                        this.FetchedNewActors.Clear();
+                        this.FetchedNewFilms.Clear();
+                        this.FetchedNewPublishers.Clear();
+                        autoResetEvent.Set();
+                    };
+                    Processor.Start();
+                    autoResetEvent.WaitOne();
+                    Processor.Dispose();
+                } 
+                autoResetEvent.Dispose();
+                endCallback?.Invoke();
+            });
         }
+
+        #endregion
     }
 }

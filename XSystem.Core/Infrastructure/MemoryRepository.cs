@@ -43,7 +43,7 @@ namespace XSystem.Core.Infrastructure
             throw new Exception("this id haven't saved");
         }
 
-        public IEnumerable<T> Get(Expression<Func<T, bool>> filterExpression = null,
+        public IQueryable<T> Get(Expression<Func<T, bool>> filterExpression = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderByFunc = null,
             string includeProperties = "")
         {
@@ -54,12 +54,14 @@ namespace XSystem.Core.Infrastructure
             query = includeProperties
                 .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
                 .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
-            return orderByFunc?.Invoke(query).ToList() ?? query.ToList();
+            //return orderByFunc?.Invoke(query).ToList() ?? query.ToList();
+            throw new NotImplementedException();
         }
 
-        public IEnumerable<T> All()
+        public IQueryable<T> All()
         {
-            return _dictionary.Values;
+            throw new NotImplementedException();
+            //return _dictionary.Values;
         }
 
         public void Clear()

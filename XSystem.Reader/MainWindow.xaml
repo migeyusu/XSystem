@@ -22,7 +22,7 @@
                       Height="600"
                       Width="1100">
     <controls:MetroWindow.Resources>
-        <Storyboard x:Key="CloseSecondMenu">
+        <!--<Storyboard x:Key="CloseSecondMenu">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)"
                                           >
                 <EasingDoubleKeyFrame KeyTime="0"
@@ -62,7 +62,7 @@
                 <DiscreteObjectKeyFrame KeyTime="0"
                                         Value="{x:Static Visibility.Visible}" />
             </ObjectAnimationUsingKeyFrames>
-        </Storyboard>
+        </Storyboard>-->
     </controls:MetroWindow.Resources>
     <Grid Margin="10">
         <controls:MetroAnimatedTabControl>
@@ -78,17 +78,17 @@
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal"
                                 Height="40">
-                        <Button Style="{StaticResource NewMember}"
+                        <!--<Button Style="{StaticResource NewMember}"
                                 Opacity="0.8"
                                 Width="40"
-                                Command="{Binding NewMemberCommand}" />
+                                Command="{Binding NewMemberCommand}" />-->
                         <Button Style="{StaticResource DeleMember}"
                                 CommandParameter="{Binding ElementName=ModelsTreeView,Path=SelectedItem}"
                                 Command="{Binding DeleteCommand}"
                                 Opacity="0.8"
                                 Width="40"
-                                ToolTip="新建" />
-                        <customControls:SearchBox Width="180"
+                                ToolTip="delete" />
+                        <customControls:SearchBox Width="200"
                                                   Margin="5,0"
                                                   SearchPressCommand="{Binding SearchCommand}"
                                                   CommandParameter="{Binding SearchString,RelativeSource={RelativeSource Self}}" />
@@ -121,11 +121,11 @@
                             <iconPacks:PackIconMaterial Kind="Group" />
                         </Button>
                     </StackPanel>
-                    <StackPanel x:Name="stackPanel"
-                                Grid.Row="1"
-                                Height="40"
-                                Orientation="Horizontal">
-                        <StackPanel.Style>
+                    <Grid Grid.Row="1">
+                        <StackPanel x:Name="stackPanel"
+                                    Height="40"
+                                    Orientation="Horizontal">
+                            <!--<StackPanel.Style>
                             <Style TargetType="{x:Type StackPanel}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ParentModel}"
@@ -139,58 +139,76 @@
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </StackPanel.Style>
-                        <StackPanel.Resources>
-                            <Style TargetType="{x:Type TextBlock}"
-                                   BasedOn="{StaticResource BaseTextBlockStyle}">
-                                <Setter Property="FontSize"
-                                        Value="{StaticResource LineFontSize}" />
-                                <Setter Property="Foreground"
-                                        Value="MediumPurple" />
-                            </Style>
-                        </StackPanel.Resources>
-                        <Button Style="{StaticResource FlatImageButton}"
-                                Width="40"
-                                CommandParameter="Actor"
-                                Command="{Binding AttachMemberCommand}"
-                                ToolTip="附加">
-                            <iconPacks:PackIconMaterial Kind="Attachment" />
-                        </Button>
-                        <ContentControl Content="{Binding ParentModel}">
-                            <ContentControl.Resources>
-                                <DataTemplate DataType="{x:Type model:Series}">
-                                    <TextBlock Text="{Binding Name,StringFormat=系列:{0}}"
-                                               Style="{StaticResource BaseTextBlockStyle}" />
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type model:Actor}">
-                                    <TextBlock Text="{Binding Name,StringFormat=演员:{0}}"
-                                               Style="{StaticResource BaseTextBlockStyle}" />
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type model:Publisher}">
-                                    <TextBlock Text="{Binding Name,StringFormat=出版商:{0}}"
-                                               Style="{StaticResource BaseTextBlockStyle}" />
-                                </DataTemplate>
-                            </ContentControl.Resources>
-                        </ContentControl>
-                        <TextBlock>
-                            <i:Interaction.Triggers>
-                                <ei:DataTrigger Binding="{Binding PreType}"
-                                                Value="{x:Type model:Film}">
-                                    <ei:ChangePropertyAction PropertyName="Text"
-                                                             Value="所有电影" />
-                                </ei:DataTrigger>
-                                <ei:DataTrigger Binding="{Binding PreType}"
-                                                Value="{x:Type model:Series}">
-                                    <ei:ChangePropertyAction PropertyName="Text"
-                                                             Value="所有系列" />
-                                </ei:DataTrigger>
-                            </i:Interaction.Triggers>
-                        </TextBlock>
-                    </StackPanel>
+                        </StackPanel.Style>-->
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type TextBlock}"
+                                       BasedOn="{StaticResource BaseTextBlockStyle}">
+                                    <Setter Property="FontSize"
+                                            Value="{StaticResource LineFontSize}" />
+                                    <Setter Property="Foreground"
+                                            Value="MediumPurple" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <Button Style="{StaticResource FlatImageButton}"
+                                    Width="40"
+                                    CommandParameter="Actor"
+                                    Command="{Binding AttachMemberCommand}"
+                                    ToolTip="附加">
+                                <iconPacks:PackIconMaterial Kind="Attachment" />
+                            </Button>
+                            <ContentControl Content="{Binding ParentModel}">
+                                <ContentControl.Resources>
+                                    <DataTemplate DataType="{x:Type model:Series}">
+                                        <TextBlock Text="{Binding Name,StringFormat=系列:{0}}"
+                                                   Style="{StaticResource BaseTextBlockStyle}" />
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type model:Actor}">
+                                        <TextBlock Text="{Binding Name,StringFormat=演员:{0}}"
+                                                   Style="{StaticResource BaseTextBlockStyle}" />
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type model:Publisher}">
+                                        <TextBlock Text="{Binding Name,StringFormat=出版商:{0}}"
+                                                   Style="{StaticResource BaseTextBlockStyle}" />
+                                    </DataTemplate>
+                                </ContentControl.Resources>
+                            </ContentControl>
+                            <TextBlock>
+                                <i:Interaction.Triggers>
+                                    <ei:DataTrigger Binding="{Binding PreType}"
+                                                    Value="{x:Type model:Film}">
+                                        <ei:ChangePropertyAction PropertyName="Text"
+                                                                 Value="所有电影" />
+                                    </ei:DataTrigger>
+                                    <ei:DataTrigger Binding="{Binding PreType}"
+                                                    Value="{x:Type model:Series}">
+                                        <ei:ChangePropertyAction PropertyName="Text"
+                                                                 Value="所有系列" />
+                                    </ei:DataTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Right"
+                                    Orientation="Horizontal">
+                            <Button Style="{StaticResource FlatImageButton}"
+                                    Command="{Binding PageBackwardCommand}"
+                                    Width="40"
+                                    ToolTip="right">
+                                <iconPacks:PackIconMaterial Kind="ArrowLeft" />
+                            </Button>
+                            <Button Style="{StaticResource FlatImageButton}"
+                                    Command="{Binding PageNextCommand}"
+                                    Width="40"
+                                    ToolTip="right">
+                                <iconPacks:PackIconMaterial Kind="ArrowRight" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                     <ListView Grid.Row="2"
                               BorderThickness="0"
                               x:Name="ModelsTreeView"
-                              ItemsSource="{Binding BindingModels}">
+                              Style="{StaticResource OptimizedItemsControl}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ItemsSource="{Binding BindingPageModels}">
                         <ListView.Resources>
                             <Style TargetType="{x:Type ListViewItem}">
                                 <Setter Property="Template">
@@ -213,8 +231,8 @@
                                                     <Setter TargetName="Border"
                                                             Property="Effect">
                                                         <Setter.Value>
-                                                            <DropShadowEffect BlurRadius="6.5"
-                                                                              ShadowDepth="2"
+                                                            <DropShadowEffect BlurRadius="3"
+                                                                              ShadowDepth="1"
                                                                               Direction="270"
                                                                               Color="DarkGray" />
                                                         </Setter.Value>
@@ -227,18 +245,21 @@
                                 <Setter Property="Margin"
                                         Value="5" />
                             </Style>
+                            <!--Command Parameter 的 Total 表示该实体下所有-->
                             <DataTemplate DataType="{x:Type model:Actor}">
-                                <Label  Width="100"
-                                        Height="50"
-                                        Style="{StaticResource BaseLabelStyle}"
-                                        Content="{Binding Name,Mode=OneWay}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDoubleClick">
-                                            <i:InvokeCommandAction Command="Select"
-                                                                   CommandParameter="{Binding Films,Mode=OneWay}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Label>
+                                <ContentControl>
+                                    <Label  Width="100"
+                                            Height="50"
+                                            Style="{StaticResource BaseLabelStyle}"
+                                            Content="{Binding Name,Mode=OneWay}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDoubleClick">
+                                                <i:InvokeCommandAction Command="Select"
+                                                                       CommandParameter="Films" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Label>
+                                </ContentControl>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type model:Film}">
                                 <local:FilmItem>
@@ -252,7 +273,7 @@
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseDoubleClick">
                                             <i:InvokeCommandAction Command="Select"
-                                                                   CommandParameter="{Binding Films,Mode=OneWay}" />
+                                                                   CommandParameter="Films"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Label>
@@ -265,7 +286,7 @@
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseDoubleClick">
                                             <i:InvokeCommandAction Command="Select"
-                                                                   CommandParameter="{Binding Series}"/>
+                                                                   CommandParameter="Series"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Label>
@@ -273,19 +294,7 @@
                         </ListView.Resources>
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <WrapPanel>
-                                    <i:Interaction.Behaviors>
-                                        <ei:FluidMoveBehavior AppliesTo="Children"
-                                                              Duration="0:0:0.6">
-                                            <ei:FluidMoveBehavior.EaseY>
-                                                <CircleEase EasingMode="EaseOut" />
-                                            </ei:FluidMoveBehavior.EaseY>
-                                            <ei:FluidMoveBehavior.EaseX>
-                                                <CircleEase EasingMode="EaseOut" />
-                                            </ei:FluidMoveBehavior.EaseX>
-                                        </ei:FluidMoveBehavior>
-                                    </i:Interaction.Behaviors>
-                                </WrapPanel>
+                                <WrapPanel/>
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.CommandBindings>
@@ -295,8 +304,9 @@
                                             Executed="Edit_OnExecuted" />
                         </ListView.CommandBindings>
                     </ListView>
-                    <userControls:DialogHostControl Grid.Row="1"
+                    <userControls:DialogHostControl Grid.Row="2"
                                                     userControls:DialogRegister.Register="ViewHost" />
+                    
                 </Grid>
             </controls:MetroTabItem>
         </controls:MetroAnimatedTabControl>

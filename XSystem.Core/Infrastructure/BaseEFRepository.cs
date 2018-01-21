@@ -49,7 +49,7 @@ namespace XSystem.Core.Infrastructure
             return _dbSet.Find(id);
         }
 
-        public IEnumerable<T> Get(Expression<Func<T, bool>> filterExpression = null,
+        public IQueryable<T> Get(Expression<Func<T, bool>> filterExpression = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderByFunc = null, string includeProperties = "")
         {
             IQueryable<T> query = _dbSet;
@@ -59,10 +59,10 @@ namespace XSystem.Core.Infrastructure
             query = includeProperties
                 .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
                 .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
-            return orderByFunc?.Invoke(query).ToList() ?? query.ToList();
+            return orderByFunc?.Invoke(query) ?? query;
         }
 
-        public IEnumerable<T> All()
+        public IQueryable<T> All()
         {
             return _dbSet;
         }

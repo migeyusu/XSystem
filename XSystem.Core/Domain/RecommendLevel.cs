@@ -1,18 +1,18 @@
 ﻿namespace XSystem.Core.Domain
 {
-    public enum RecommendLevel : byte
+    public enum RecommendLevel : int
     {
-        Recommend = 1,
-        Frequently = 2,
+        Recommend = 5,
+        Frequently = 4,
         Valuable = 3,
-        Sometimes = 4,
+        Sometimes = 2,
         /// <summary>
         /// 罕见
         /// </summary>
-        Rare = 5,
+        Rare = 1,
         /// <summary>
-        /// 不建议显示
+        /// 排除
         /// </summary>
-        Exclude = 6
+        Exclude = 0
     }
 }

@@ -10,17 +10,32 @@ namespace XSystem.Core.Infrastructure
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+//            container.Register(Component.For<IRepository<Actor>>()
+//                .ImplementedBy<MemoryRepository<Actor>>()
+//                .LifestyleSingleton());
+//            container.Register(Component.For<IRepository<Film>>()
+//                .ImplementedBy<MemoryRepository<Film>>()
+//                .LifestyleSingleton());
+//            container.Register(Component.For<IRepository<Series>>()
+//                .ImplementedBy<MemoryRepository<Series>>()
+//                .LifestyleSingleton());
+//            container.Register(Component.For<IRepository<Publisher>>()
+//                .ImplementedBy<MemoryRepository<Publisher>>()
+//                .LifestyleSingleton());
+//            container.Register(Component.For<IWorkUnit>()
+//                .ImplementedBy<MemoryWorkUnit>()
+//                .LifestyleSingleton());
             container.Register(Component.For<IRepository<Actor>>()
-                .ImplementedBy<MemoryRepository<Actor>>()
+                .ImplementedBy<BaseEfRepository<Actor>>()
                 .LifestyleSingleton());
             container.Register(Component.For<IRepository<Film>>()
-                .ImplementedBy<MemoryRepository<Film>>()
+                .ImplementedBy<BaseEfRepository<Film>>()
                 .LifestyleSingleton());
             container.Register(Component.For<IRepository<Series>>()
-                .ImplementedBy<MemoryRepository<Series>>()
+                .ImplementedBy<BaseEfRepository<Series>>()
                 .LifestyleSingleton());
             container.Register(Component.For<IRepository<Publisher>>()
-                .ImplementedBy<MemoryRepository<Publisher>>()
+                .ImplementedBy<BaseEfRepository<Publisher>>()
                 .LifestyleSingleton());
             container.Register(Component.For<IWorkUnit>()
                 .ImplementedBy<EFWorkUnit>()

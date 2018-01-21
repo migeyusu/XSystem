@@ -11,6 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
+using Castle.Core.Internal;
 using Xunit;
 
 namespace Reptile
@@ -25,8 +26,6 @@ namespace Reptile
         protected BlockingCollection<string> UriBuffer;
 
         protected BlockingCollection<Page> PageBuffer;
-
-        //protected ConcurrentDictionary<string, bool> UrlCache;
 
         protected ReptileContext Context;
 
@@ -71,22 +70,22 @@ namespace Reptile
         /// <summary>   
         /// 所有缓冲区都已排空且未进行抓取
         /// </summary>
-        public event Action InnerEnd;
+        public event Action PipeEmptied;
 
         /// <summary>
         /// 传入页面处理方法
         /// </summary>
         /// <param name="decodeAction">页面解析</param>
-        /// <param name="downloadparallel">页面下载并行度</param>
-        /// <param name="decodeparallel">页面解析并行度</param>
+        /// <param name="downloadParallel">页面下载并行度</param>
+        /// <param name="decodeParallel">页面解析并行度</param>
         /// <param name="urlCreateFunc">url初始化</param>
-        public ReptileProcessor(Action<Page, ReptileContext> decodeAction, int downloadparallel,
-            int decodeparallel,Func<IEnumerable<string>> urlCreateFunc = null)
+        public ReptileProcessor(Action<Page, ReptileContext> decodeAction, int downloadParallel,
+            int decodeParallel, Func<IEnumerable<string>> urlCreateFunc = null)
         {
             _urlCreateFunc = urlCreateFunc;
             _decodeAction = decodeAction ?? throw new ArgumentNullException();
-            this._downloadDegreeOfParallel = downloadparallel;
-            this._decodeDegreeOfParallel = decodeparallel;
+            _downloadDegreeOfParallel = downloadParallel;
+            _decodeDegreeOfParallel = decodeParallel;
         }
 
         protected void InternalStart()
@@ -95,18 +94,40 @@ namespace Reptile
             Working = true;
             for (var i = 0; i < _downloadDegreeOfParallel; i++) {
                 ThreadPool.QueueUserWorkItem(state => {
+                    CookieContainer container = null;
                     var stopwatch = new Stopwatch();
-                    foreach (var s in UriBuffer.GetConsumingEnumerable()) {
+                    foreach (var url in UriBuffer.GetConsumingEnumerable()) {
                         //grab
                         try {
                             Interlocked.Increment(ref _grabbingThreadCount);
                             stopwatch.Start();
-                            var webRequest = WebRequest.Create(s);
-                            using (var webResponse = webRequest.GetResponse()) {
+                            //using (var webClient = new WebClient()) {
+                            //    webClient.Headers[HttpRequestHeader.UserAgent] =
+                            //        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";
+                            //    var downloadString = webClient.DownloadString(url);
+                            //    PageBuffer.Add(new Page() {
+                            //        Url = url,
+                            //        Content = downloadString
+                            //    });
+                            //}
+                            var webRequest = (HttpWebRequest) WebRequest.Create(url);
+                            if (container != null) {
+                                webRequest.CookieContainer = container;
+                            }
+                            webRequest.UserAgent =
+                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36";
+                            webRequest.KeepAlive = true;
+                            using (var webResponse = (HttpWebResponse) webRequest.GetResponse()) {
+                                if (container == null) {
+                                    container = new CookieContainer();
+                                    foreach (Cookie responseCookie in webResponse.Cookies) {
+                                        container.Add(responseCookie);
+                                    }
+                                }
                                 using (var responseStream = webResponse.GetResponseStream()) {
                                     using (var streamReader = new StreamReader(responseStream)) {
                                         PageBuffer.Add(new Page() {
-                                            Url = s,
+                                            Url = url,
                                             Content = streamReader.ReadToEnd()
                                         });
                                     }
@@ -114,7 +135,7 @@ namespace Reptile
                             }
                         }
                         catch (Exception e) {
-                            ErrorUrl.Add(new ErrorPage {Error = 1, Exception = e, Url = s});
+                            ErrorUrl.Add(new ErrorPage {Error = 1, Exception = e, Url = url});
                         }
                         finally {
                             stopwatch.Stop();
@@ -131,11 +152,10 @@ namespace Reptile
                         try {
                             Interlocked.Increment(ref _decodingThreadCount);
                             stopwatch.Start();
-                            _decodeAction(page, this.Context);
+                            _decodeAction(page, Context);
                         }
-                        catch (Exception e)
-                        {
-                            ErrorUrl.Add(new ErrorPage() { Error = 2, Exception = e, Url = page.Url });
+                        catch (Exception e) {
+                            ErrorUrl.Add(new ErrorPage() {Error = 2, Exception = e, Url = page.Url});
                         }
                         finally {
                             stopwatch.Stop();
@@ -157,8 +177,7 @@ namespace Reptile
                         if (UriBuffer.Count == 0 && PageBuffer.Count == 0 &&
                             Interlocked.CompareExchange(ref _grabbingThreadCount, 0, 0) == 0 &&
                             Interlocked.CompareExchange(ref _decodingThreadCount, 0, 0) == 0) {
-                            OnInnerEnd();
-                            return;
+                            OnPipeEmpty();
                         }
                     }
                 }
@@ -195,12 +214,11 @@ namespace Reptile
             Working = false;
             UriBuffer.CompleteAdding();
             PageBuffer.CompleteAdding();
-            
         }
 
-        protected virtual void OnInnerEnd()
+        protected virtual void OnPipeEmpty()
         {
-            InnerEnd?.Invoke();
+            PipeEmptied?.Invoke();
         }
 
 
@@ -209,6 +227,7 @@ namespace Reptile
             InternalStop();
             UriBuffer.Dispose();
             PageBuffer.Dispose();
+            ErrorUrl.Clear();
         }
     }
 
@@ -217,7 +236,7 @@ namespace Reptile
         /// <summary>
         /// 待抓取的url集合
         /// </summary>
-        private BlockingCollection<string> _urls;
+        private readonly BlockingCollection<string> _urls;
 
         public ReptileContext(BlockingCollection<string> urls)
         {
@@ -241,15 +260,10 @@ namespace Reptile
         public string Url { get; set; }
 
         public Exception Exception { get; set; }
+
         /// <summary>
         /// 1:网页无法获取，2:解析出现错误
         /// </summary>
         public byte Error { get; set; }
-
-        public static void Save(IEnumerable<ErrorPage> errorPages)
-        {
-            
-        }
-
     }
 }

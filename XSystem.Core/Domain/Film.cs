@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Input;
 using Castle.Components.DictionaryAdapter;
 using Castle.Core.Internal;
@@ -11,7 +13,15 @@ namespace XSystem.Core.Domain
 {
     public class Film:Model
     {
-        //object seriesLocker=new object();
+        public const string ShotDirPath = "FilmShotDir";
+
+        private RecommendLevel _recommendLevel;
+
+        /// <summary>
+        /// 用于UI绑定，仅显示前几个
+        /// </summary>
+        [NotMapped]
+        public IEnumerable<Actor> MainActors => Actors?.Take(3);
 
         public virtual List<Actor> Actors { get; set; }
 
@@ -21,14 +31,32 @@ namespace XSystem.Core.Domain
         /// </summary>
         public string FileLocation { get; set; }
 
+        [NotMapped]
+        public string[] CharacteristicItems {
+            get { return Characteristic.Split(new[] {"\r\n"}, StringSplitOptions.None); }
+        }
+        /// <summary>
+        /// 用于持久化
+        /// </summary>
         public string Characteristic { get; set; }
 
         public Region Region { get; set; }
-
+        
         /// <summary>
-        /// 来源页面
+        /// 来源页面根据规则
         /// </summary>
-        public string SourceUrl { get; set; }
+        [NotMapped]
+        public string SourceUrl {
+            get {
+                switch (Region) {
+                    case Region.Dmm:
+                        return $"http://www.dmm.co.jp/mono/dvd/-/detail/=/cid={Code}/";
+                    case Region.Mgs:
+                        return null;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }}
 
         public DateTime LastUpdateTime { get; set; }
 
@@ -36,23 +64,43 @@ namespace XSystem.Core.Domain
         /// 本地图片标识，loading在UI层实现
         /// </summary>
         public string ShotTag { get; set; }
+
         /// <summary>
-        /// 在线url
+        /// 图片url根据规则生成
         /// </summary>
-        public string ImageUrl { get; set; }
+        [NotMapped]
+        public string ShotUrl {
+            get {
+                switch (Region) {
+                    case Region.Dmm:
+                        if (Code==null) {
+                            throw new NullReferenceException("haven't fetch!");
+                        }
+                        return $"https://pics.dmm.co.jp/mono/movie/adult/{Code}/{Code}ps.jpg";
+                    case Region.Mgs:
+                        return null;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
         /// <summary>
         /// 推荐级别
         /// </summary>
-        public RecommendLevel RecommendLevel { get; set; }
+        public RecommendLevel RecommendLevel {
+            get { return _recommendLevel; }
+            set {
+                if (value == _recommendLevel) return;
+                _recommendLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// 代码
         /// </summary>
         public string Code { get; set; }
-
-        /// <summary>
-        /// 详情页Url
-        /// </summary>
-        public string DetailUrl { get; set; }
 
         public bool IsOneActor => Actors.Count == 1;
 

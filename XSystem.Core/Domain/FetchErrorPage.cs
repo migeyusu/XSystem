@@ -13,7 +13,9 @@ namespace XSystem.Core.Domain
         
         public string Exception { get; set; }
 
-        public static FetchErrorPage Create(string url,Exception exception)
+        public byte ErrorCode { get; set; }
+
+        public static FetchErrorPage Create(string url,Exception exception,byte code)
         {
             var stringBuilder = new StringBuilder();
             while (exception!=null) {

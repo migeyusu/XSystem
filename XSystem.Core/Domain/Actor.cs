@@ -10,6 +10,10 @@ namespace XSystem.Core.Domain
 {
     public class Actor : Model
     {
+        public const string ShotDirName = "ActorShotDir";
+
+        public const string UndefinedShotName = "Undefined.jpg";
+
         public string ShotTag { get; set; }
 
         public string ShotUrl { get; set; }
@@ -23,7 +27,7 @@ namespace XSystem.Core.Domain
             get {
                 switch (Region) {
                     case Region.Dmm:
-                        return $"http://www.dmm.co.jp/mono/dvd/-/actress/=/keyword={Code}/";
+                        return $"http://www.dmm.co.jp/mono/dvd/-/list/=/article=actress/id={Code}/limit=120/";
                     case Region.Mgs:
                         return null;
                     default:

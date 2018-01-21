@@ -5,10 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:model="clr-namespace:XSystem.Core.Domain;assembly=XSystem.Core"
              xmlns:local="clr-namespace:XSystem.Reader"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              Background="White"
              d:DataContext="{d:DesignInstance model:Film}"
-             Width="200">
+             Width="170">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -35,13 +38,16 @@
                 <BitmapImage UriSource="Resource/bd_logo1.png" />
             </Image.Source>
         </Image>
+        <materialDesign:RatingBar Grid.Row="0"
+                                  HorizontalAlignment="Right"
+                                  x:Name="BasicRatingBar"
+                                  Value="{Binding RecommendLevel}" />
         <Button Grid.Row="0"
                 Width="40"
                 Height="40"
                 VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                Command="{Binding PlayCommand}"
-                Margin="0,0,160,0">
+                HorizontalAlignment="Left"
+                Command="{Binding PlayCommand}">
             <Button.Style>
                 <Style TargetType="{x:Type Button}"
                        BasedOn="{StaticResource MaskImageButton}">
@@ -67,15 +73,15 @@
             </Button.Foreground>
         </Button>
         <TextBlock Grid.Row="1"
-                   Text="{Binding Name,Mode=OneWay}" />
+                   Text="{Binding Name,Mode=OneTime}" />
         <TextBlock Grid.Row="2"
-                   Text="{Binding Series.Name,Mode=OneWay}">
+                   Text="{Binding Series.Name,Mode=OneTime}">
             <Hyperlink Command="Select"
-                       CommandParameter="{Binding Series.Films,Mode=OneWay}" />
+                       CommandParameter="{Binding Series.Films,Mode=OneTime}" />
         </TextBlock>
         <ListBox Grid.Row="3"
                  BorderThickness="0"
-                 ItemsSource="{Binding Actors,Mode=OneWay}"
+                 ItemsSource="{Binding MainActors,Mode=OneTime}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -87,13 +93,13 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                <Button Content="{Binding Name,Mode=OneWay}"
+                                <Button Content="{Binding Name,Mode=OneTime}"
                                         Foreground="DodgerBlue"
                                         Style="{StaticResource MainWinTextButton}"
                                         Margin="5,0,0,0"
                                         d:DataContext="{d:DesignInstance model:Actor}"
                                         Command="Select"
-                                        CommandParameter="{Binding Films,Mode=OneWay}" />
+                                        CommandParameter="Films" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>

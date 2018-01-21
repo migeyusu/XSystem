@@ -12,10 +12,10 @@ namespace XSystem.Core.Domain
         void Delete(object id);
         void Update(T x);
         T GetById(Guid id);
-        IEnumerable<T> Get(Expression<Func<T, bool>> filterExpression = null,
+        IQueryable<T> Get(Expression<Func<T, bool>> filterExpression = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderByFunc = null,
             string includeProperties = "");
-        IEnumerable<T> All();
+        IQueryable<T> All();
         /// <summary>
         /// 清空指定实体对应的表
         /// </summary>
