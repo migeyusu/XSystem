@@ -154,6 +154,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ActorImgConverter.cs" />
+    <Compile Include="ControlRegister.cs" />
+    <Compile Include="FilmImgConverter.cs" />
     <Compile Include="FilmItem.xaml.cs">
       <DependentUpon>FilmItem.xaml</DependentUpon>
     </Compile>

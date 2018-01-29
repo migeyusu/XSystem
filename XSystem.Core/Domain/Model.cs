@@ -13,6 +13,19 @@ namespace XSystem.Core.Domain
 
         public string Name { get; set; }
 
+        private RecommendLevel _recommendLevel;
+        /// <summary>
+        /// 推荐级别
+        /// </summary>
+        public RecommendLevel RecommendLevel {
+            get { return _recommendLevel; }
+            set {
+                if (value == _recommendLevel) return;
+                _recommendLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

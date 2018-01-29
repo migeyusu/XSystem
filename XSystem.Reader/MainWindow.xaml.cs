@@ -28,7 +28,7 @@ namespace XSystem.Reader
     {
         private readonly MainWindowViewModel _viewModel;
 
-        private FilmService _filmService;
+        private readonly FilmService _filmService;
 
         public MainWindow(MainWindowViewModel viewModel, FilmService filmService)
         {
@@ -38,13 +38,13 @@ namespace XSystem.Reader
             InitializeComponent();
         }
 
-        private Type filmType = typeof(Film);
+        private readonly Type _filmType = typeof(Film);
 
-        private Type publisherType = typeof(Publisher);
+        private Type _publisherType = typeof(Publisher);
 
-        private Type seriesType = typeof(Series);
+        private readonly Type _seriesType = typeof(Series);
 
-        private Type actorType = typeof(Actor);
+        private Type _actorType = typeof(Actor);
 
         /// <summary>
         /// 
@@ -53,37 +53,41 @@ namespace XSystem.Reader
         /// <param name="e">传入的查询字符串（不管集合大小）</param>
         private void Review_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
+            if (e.Parameter == null) {
+                Executor(sender, e);
+            }
+        }
+
+        private void EventSetter_OnHandler(object sender, MouseButtonEventArgs e)
+        {
+            Executor(sender, e);
+        }
+
+        private void Executor(object sender, RoutedEventArgs e)
+        {
             var button = e.OriginalSource as FrameworkElement;
             var model = button.DataContext as Model;
             _viewModel.ParentModel = model;
-            var searchstring = e.Parameter.ToString();
             if (model is Actor) {
                 _viewModel.PreviewQueryable = ((Actor) model).Films.AsQueryable();
                 //_filmService.FilmsSearch(film => film.Actors.Contains(model));
-                _viewModel.PreType = filmType;
+                _viewModel.PreType = _filmType;
             }
             else if (model is Series) {
                 _viewModel.PreviewQueryable = _filmService.FilmsSearch(film => film.Series.Name == model.Name);
-                _viewModel.PreType = filmType;
+                _viewModel.PreType = _filmType;
             }
             else if (model is Publisher) {
                 var publisher = model as Publisher;
                 _viewModel.PreviewQueryable = publisher.Series.AsQueryable();
-                _viewModel.PreType = seriesType;
+                _viewModel.PreType = _seriesType;
             }
         }
-
-        /// <summary>
-        /// 查看详细信息
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Edit_OnExecuted(object sender, ExecutedRoutedEventArgs e) { }
     }
 
 
     /* 目的是为了让IEnumerable能够被当成IQueryable，后发现只需要调用asquery
-     */ 
+     */
     ///// <summary>
     ///// 允许
     ///// </summary>
@@ -114,7 +118,6 @@ namespace XSystem.Reader
 
     //public class DefaultProvider
     //{
-        
+
     //}
-    
 }

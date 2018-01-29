@@ -11,55 +11,27 @@
              mc:Ignorable="d"
              Background="White"
              d:DataContext="{d:DesignInstance model:Film}"
-             Width="170">
-    <UserControl.Resources>
+             Width="128">
+    <!--<UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/ConciseDesign.WPF;component/StylesAndTemplate/Buttons.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </UserControl.Resources>
+    </UserControl.Resources>-->
     <Grid>
-        <Grid.Resources>
-            <Style TargetType="{x:Type TextBlock}"
-                   BasedOn="{StaticResource BaseTextBlockStyle}">
-                <Setter Property="FontSize"
-                        Value="{StaticResource LineFontSize}" />
-            </Style>
-        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="168" />
-            <RowDefinition Height="26" />
-            <RowDefinition Height="26" />
-            <RowDefinition Height="26" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
-        <Image Stretch="Uniform">
-            <Image.Source>
-                <BitmapImage UriSource="Resource/bd_logo1.png" />
-            </Image.Source>
-        </Image>
-        <materialDesign:RatingBar Grid.Row="0"
-                                  HorizontalAlignment="Right"
-                                  x:Name="BasicRatingBar"
-                                  Value="{Binding RecommendLevel}" />
+        <Image Stretch="Uniform"
+               Source="{Binding ShotTag,Mode=OneTime,Converter={StaticResource FilmImgConverter}}" />
         <Button Grid.Row="0"
-                Width="40"
-                Height="40"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Left"
-                Command="{Binding PlayCommand}">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}"
-                       BasedOn="{StaticResource MaskImageButton}">
-                    <Setter Property="Background"
-                            Value="LimeGreen" />
-                </Style>
-            </Button.Style>
-            <Button.OpacityMask>
-                <ImageBrush ImageSource="Resource/media-play-48.png" />
-            </Button.OpacityMask>
-        </Button>
-        <Button Grid.Row="0"
+                Command="{Binding PlayCommand}"
+                Style="{StaticResource PlayButtonStyle}"/>
+        <!--<Button Grid.Row="0"
                 Width="40"
                 Height="40"
                 Background="DodgerBlue"
@@ -71,38 +43,25 @@
             <Button.Foreground>
                 <ImageBrush ImageSource="Resource/Pencil-48.png" />
             </Button.Foreground>
-        </Button>
+        </Button>-->
         <TextBlock Grid.Row="1"
-                   Text="{Binding Name,Mode=OneTime}" />
+                   Text="{Binding Name,Mode=OneTime}" 
+                   Style="{StaticResource LineTextBlockStyle}"/>
         <TextBlock Grid.Row="2"
-                   Text="{Binding Series.Name,Mode=OneTime}">
+                   Text="{Binding Series.Name,Mode=OneTime}"
+                   Style="{StaticResource LineTextBlockStyle}">
             <Hyperlink Command="Select"
                        CommandParameter="{Binding Series.Films,Mode=OneTime}" />
         </TextBlock>
         <ListBox Grid.Row="3"
                  BorderThickness="0"
                  ItemsSource="{Binding MainActors,Mode=OneTime}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ItemsPanel="{StaticResource ListBoxItemsPanelTemplate}">
             <ListBox.Resources>
                 <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                <Button Content="{Binding Name,Mode=OneTime}"
-                                        Foreground="DodgerBlue"
-                                        Style="{StaticResource MainWinTextButton}"
-                                        Margin="5,0,0,0"
-                                        d:DataContext="{d:DesignInstance model:Actor}"
-                                        Command="Select"
-                                        CommandParameter="Films" />
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
+                    <Setter Property="Template"
+                            Value="{StaticResource ActorControlTemplate}"/>
                 </Style>
             </ListBox.Resources>
         </ListBox>

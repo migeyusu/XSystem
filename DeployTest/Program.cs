@@ -1,12 +1,12 @@
-﻿//#define filmfetch
+﻿#define filmfetch
 //#define actorfetch
 //#define dmmfetchtest
 
 //#define downloadimg
 
-#define downloadimg2
+//#define downloadimg2
 
-#define runscript
+//#define runscript
 
 using System;
 using System.Collections;
@@ -160,7 +160,13 @@ namespace DeployTest
                 //    LastUpdateTime = DateTime.Now
                 //});
                 //filmContext.SaveChanges();
-                IEnumerable<Actor> actors = filmContext.Actors.Where((actor => actor.IsInitialAccomplish == true));
+                IEnumerable<Actor> actors = filmContext.Actors.ToList();
+                var enumerable = actors.Skip(100)
+                    .Take(20);
+                var take = actors.Skip(120)
+                    .Take(20);
+                Console.WriteLine(enumerable.Count());
+                Console.WriteLine(take.Count());
                 Console.WriteLine(actors.Count());
 
                 //                filmContext.Configuration.AutoDetectChangesEnabled = false;

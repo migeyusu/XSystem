@@ -4,20 +4,25 @@
              xmlns:local="clr-namespace:XSystem.Reader"
              Startup="App_OnStartup">
     <Application.Resources>
-         <ResourceDictionary>
-             <ResourceDictionary.MergedDictionaries>
-                 <ResourceDictionary Source="BaseDefination.xaml"/>
-                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Amber.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="BaseDefination.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Teal.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
-                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
-                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/controls.listbox.xaml" />
-                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
-                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
-                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
-                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/blue.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/ConciseDesign.WPF;component/StylesAndTemplate/ControlStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MahApps.Metro;component/Styles/controls.listbox.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/blue.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/ConciseDesign.WPF;component/StylesAndTemplate/ControlStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-         </ResourceDictionary>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

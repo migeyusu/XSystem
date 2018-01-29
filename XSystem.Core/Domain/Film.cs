@@ -15,8 +15,6 @@ namespace XSystem.Core.Domain
     {
         public const string ShotDirPath = "FilmShotDir";
 
-        private RecommendLevel _recommendLevel;
-
         /// <summary>
         /// 用于UI绑定，仅显示前几个
         /// </summary>
@@ -82,18 +80,6 @@ namespace XSystem.Core.Domain
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }
-        }
-
-        /// <summary>
-        /// 推荐级别
-        /// </summary>
-        public RecommendLevel RecommendLevel {
-            get { return _recommendLevel; }
-            set {
-                if (value == _recommendLevel) return;
-                _recommendLevel = value;
-                OnPropertyChanged();
             }
         }
 

@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Castle.Core.Internal;
 using ConciseDesign.WPF.UserControls;
@@ -19,6 +24,9 @@ namespace XSystem.Reader
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         private readonly IDialogCoordinator _dialogCoordinator;
+
+        public WrapPanel FilmsView => new Lazy<WrapPanel>(() => ControlRegister.GetById("FilmsView") as WrapPanel)
+            .Value;
 
         public DialogHostControl DialogHost => new Lazy<DialogHostControl>(() =>
             DialogRegister.GetById("ViewHost")).Value;
@@ -41,12 +49,12 @@ namespace XSystem.Reader
             }
         }
 
-        private IQueryable<Model> _searchResultQueryable;
+        private IEnumerable<Model> _searchResultQueryable;
 
         /// <summary>
-        /// 二次查询结果（用于搜索）
+        /// 二次查询结果（用于搜索/翻页）
         /// </summary>
-        public IQueryable<Model> SearchResultQueryable {
+        public IEnumerable<Model> SearchResultQueryable {
             get { return _searchResultQueryable; }
             set {
                 _searchResultQueryable = value;
@@ -64,7 +72,9 @@ namespace XSystem.Reader
             get { return _previewQueryable; }
             set {
                 _previewQueryable = value;
-                SearchResultQueryable = value;
+                var models = value.ToArray();
+                _maxResultModelsCount = models.Length;
+                SearchResultQueryable = models;
             }
         }
 
@@ -101,10 +111,15 @@ namespace XSystem.Reader
         private Model _parentModel;
         private Type _preType;
 
+        //private System.Collections.Concurrent.ObjectPool<FilmItem> filmItems=new System.Collections.Concurrent.ObjectPool<FilmItem>();
+
+        private Stack items = new Stack();
+
         public MainWindowViewModel(FilmService service)
         {
             _dialogCoordinator = DialogCoordinator.Instance;
             _service = service;
+
             //var film = new Film() { Name = "wert./xznlj" };
             //var film2 = new Film() { Name = "wert./xzn2312lj" };
             //var actor = new Actor() { Name = "沃尔特为人类" };
@@ -124,21 +139,37 @@ namespace XSystem.Reader
             //BindingModels = new ObservableCollection<Model> {
             //    film
             //};
+            for (var i = 0; i < PageModelCount; i++) {
+                items.Push(new FilmItem());
+            }
         }
 
         private int handle = 0;
 
-        public int PageModelCount { get; set; } = 20;
+        public int PageModelCount { get; set; } = 40;
 
         private void LoadPage()
         {
             BindingPageModels = new ObservableCollection<Model>(SearchResultQueryable
-                .OrderBy(model => model.Name)
                 .Skip(handle)
-                .Take(PageModelCount)
-                .ToArray());
+                .Take(PageModelCount));
             handle += BindingPageModels.Count;
-            _maxResultModelsCount = SearchResultQueryable.Count();
+            //            var models = SearchResultQueryable
+            //                .Skip(this.handle)
+            //                .Take(PageModelCount)
+            //                .ToArray();
+            //            int handle = 0;
+            //            foreach (FilmItem child in FilmsView.Children) {
+            //                child.DataContext = models[handle];
+            //                ++handle;
+            //            }
+            //            for (int i = handle; i < models.Length; i++) {
+            //                var model = models[i];
+            //                var filmItem = (FilmItem) items.Pop();
+            //                filmItem.DataContext = model;
+            //                FilmsView.Children.Add(filmItem);
+            //            }
+            //            this.handle += FilmsView.Children.Count;
         }
 
         public ICommand PageNextCommand => new AnotherCommandImplementation(o => { LoadPage(); },
@@ -148,6 +179,10 @@ namespace XSystem.Reader
             handle = handle < 2 * PageModelCount ? 0 : handle - 2 * PageModelCount;
             LoadPage();
         }, (o => handle > PageModelCount));
+
+        public ICommand UseFamousCommand => new AnotherCommandImplementation((o => {
+            
+        }));
 
         public ICommand AllMembersCommand => new AnotherCommandImplementation(o => {
             if (o == null) {
@@ -296,10 +331,12 @@ namespace XSystem.Reader
 
         public ICommand SearchCommand => new AnotherCommandImplementation(o => {
             if (o == null || o.ToString().IsEmpty()) {
-                SearchResultQueryable = PreviewQueryable;
+                SearchResultQueryable = PreviewQueryable.ToArray();
             }
             else {
-                SearchResultQueryable = PreviewQueryable.Where(model => model.Name.Contains(o.ToString()));
+                SearchResultQueryable = PreviewQueryable
+                    .Where(model => model.Name.Contains(o.ToString()))
+                    .ToArray();
             }
         });
 

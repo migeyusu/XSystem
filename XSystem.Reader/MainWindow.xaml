@@ -12,6 +12,7 @@
                       xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
                       xmlns:customControls="clr-namespace:ConciseDesign.WPF.CustomControls;assembly=ConciseDesign.WPF"
                       xmlns:userControls="clr-namespace:ConciseDesign.WPF.UserControls;assembly=ConciseDesign.WPF"
+                      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                       dialogs:DialogParticipation.Register="{Binding}"
                       GlowBrush="{DynamicResource AccentColorBrush}"
                       NonActiveWindowTitleBrush="{DynamicResource AccentColorBrush}"
@@ -22,6 +23,14 @@
                       Height="600"
                       Width="1100">
     <controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
         <!--<Storyboard x:Key="CloseSecondMenu">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)"
                                           >
@@ -66,9 +75,7 @@
     </controls:MetroWindow.Resources>
     <Grid Margin="10">
         <controls:MetroAnimatedTabControl>
-            <controls:MetroTabItem Header="爬虫">
-                
-            </controls:MetroTabItem>
+            <controls:MetroTabItem Header="爬虫" />
             <controls:MetroTabItem Header="查看">
                 <Grid Margin="0,10,0,0">
                     <Grid.RowDefinitions>
@@ -92,6 +99,19 @@
                                                   Margin="5,0"
                                                   SearchPressCommand="{Binding SearchCommand}"
                                                   CommandParameter="{Binding SearchString,RelativeSource={RelativeSource Self}}" />
+                        <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                      ToolTip="by famous"
+                                      Command="{Binding UseFamousCommand}">
+                            <materialDesign:PackIcon Kind="Star"
+                                                     RenderTransformOrigin=".5,.5">
+                                <materialDesign:PackIcon.RenderTransform>
+                                    <RotateTransform Angle="45" />
+                                </materialDesign:PackIcon.RenderTransform>
+                            </materialDesign:PackIcon>
+                            <materialDesign:ToggleButtonAssist.OnContent>
+                                <materialDesign:PackIcon Kind="Star" />
+                            </materialDesign:ToggleButtonAssist.OnContent>
+                        </ToggleButton>
                         <Button Style="{StaticResource FlatImageButton}"
                                 Width="40"
                                 CommandParameter="Actor"
@@ -149,10 +169,16 @@
                                             Value="MediumPurple" />
                                 </Style>
                             </StackPanel.Resources>
+                            <!--                            <Button Style="{StaticResource FlatImageButton}"-->
+                            <!--                                    Width="40"-->
+                            <!--                                    CommandParameter="Actor"-->
+                            <!--                                    Command="{Binding AllMembersCommand}"-->
+                            <!--                                    ToolTip="按推荐排序">-->
+                            <!--                                <iconPacks:PackIconMaterial Kind="Star" />-->
+                            <!--                            </Button>-->
                             <Button Style="{StaticResource FlatImageButton}"
                                     Width="40"
                                     CommandParameter="Actor"
-                                    Command="{Binding AttachMemberCommand}"
                                     ToolTip="附加">
                                 <iconPacks:PackIconMaterial Kind="Attachment" />
                             </Button>
@@ -203,10 +229,14 @@
                             </Button>
                         </StackPanel>
                     </Grid>
+                    <!--<WrapPanel Grid.Row="2"
+                               x:Name="FilmsTreeView"
+                               local:ControlRegister.Register="FilmsView"
+                               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    </WrapPanel>-->
                     <ListView Grid.Row="2"
                               BorderThickness="0"
                               x:Name="ModelsTreeView"
-                              Style="{StaticResource OptimizedItemsControl}"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               ItemsSource="{Binding BindingPageModels}">
                         <ListView.Resources>
@@ -215,24 +245,36 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type ListViewItem}">
                                             <Grid>
-                                                <Border x:Name="Border"
-                                                        Background="White">
-                                                    <Border.Effect>
-                                                        <DropShadowEffect BlurRadius="5"
-                                                                          ShadowDepth="1"
+                                                <Rectangle x:Name="Border"
+                                                           Fill="White">
+                                                    <Rectangle.Effect>
+                                                        <DropShadowEffect BlurRadius="3"
+                                                                          ShadowDepth="0"
                                                                           Color="DarkGray" />
-                                                    </Border.Effect>
-                                                </Border>
-                                                <ContentPresenter />
+                                                    </Rectangle.Effect>
+                                                </Rectangle>
+                                                <ContentPresenter x:Name="ContentPresenter" />
+                                                <Rectangle Fill="Black"
+                                                           Opacity="0.4"></Rectangle>
+                                                <materialDesign:RatingBar HorizontalAlignment="Center"
+                                                                          Value="{Binding RecommendLevel}"
+                                                                          x:Name="RatingBar"
+                                                                          Visibility="Collapsed" />
                                             </Grid>
                                             <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver"
+                                                         Value="True">
+                                                    <Setter TargetName="RatingBar"
+                                                            Property="Visibility"
+                                                            Value="Visible" />
+                                                </Trigger>
                                                 <Trigger Property="IsSelected"
                                                          Value="True">
                                                     <Setter TargetName="Border"
                                                             Property="Effect">
                                                         <Setter.Value>
-                                                            <DropShadowEffect BlurRadius="3"
-                                                                              ShadowDepth="1"
+                                                            <DropShadowEffect BlurRadius="5"
+                                                                              ShadowDepth="1.5"
                                                                               Direction="270"
                                                                               Color="DarkGray" />
                                                         </Setter.Value>
@@ -243,75 +285,80 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Setter Property="Margin"
-                                        Value="5" />
+                                        Value="7,7,0,0" />
+                                <EventSetter Event="MouseDoubleClick"
+                                             Handler="EventSetter_OnHandler" />
                             </Style>
                             <!--Command Parameter 的 Total 表示该实体下所有-->
                             <DataTemplate DataType="{x:Type model:Actor}">
-                                <ContentControl>
-                                    <Label  Width="100"
-                                            Height="50"
-                                            Style="{StaticResource BaseLabelStyle}"
-                                            Content="{Binding Name,Mode=OneWay}">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="MouseDoubleClick">
-                                                <i:InvokeCommandAction Command="Select"
-                                                                       CommandParameter="Films" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                    </Label>
-                                </ContentControl>
+                                <Grid Height="130"
+                                      Width="122">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="100" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Image Stretch="Uniform"
+                                           Source="{Binding ShotTag,Mode=OneTime,Converter={StaticResource ActorImgConverter}}" />
+                                    <TextBlock Grid.Row="1"
+                                               TextWrapping="Wrap"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               Text="{Binding Name,Mode=OneTime}" />
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type model:Film}">
-                                <local:FilmItem>
-                                </local:FilmItem>
+                                <local:FilmItem />
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type model:Series}">
-                                <Label Width="100"
-                                        Height="50"
-                                       Style="{StaticResource BaseLabelStyle}"
-                                        Content="{Binding Name,Mode=OneWay}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDoubleClick">
-                                            <i:InvokeCommandAction Command="Select"
-                                                                   CommandParameter="Films"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Label>
+                                <Border Width="122"
+                                        Height="50">
+                                    <TextBlock Text="{Binding Name,Mode=OneTime}"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis"
+                                               Margin="5"
+                                               TextWrapping="Wrap" />
+                                </Border>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type model:Publisher}">
-                                <Label Style="{StaticResource BaseLabelStyle}"
-                                        Width="100"
-                                        Height="50"
-                                        Content="{Binding Name,Mode=OneWay}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDoubleClick">
-                                            <i:InvokeCommandAction Command="Select"
-                                                                   CommandParameter="Series"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Label>
+                                <Border Width="122"
+                                        Height="50">
+                                    <TextBlock Text="{Binding Name,Mode=OneTime}"
+                                               Margin="5"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               TextWrapping="Wrap" />
+                                </Border>
                             </DataTemplate>
                         </ListView.Resources>
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <WrapPanel/>
+                                <WrapPanel VirtualizingPanel.VirtualizationMode="Recycling"
+                                           VirtualizingPanel.IsContainerVirtualizable="True"
+                                           VirtualizingPanel.CacheLengthUnit="Item" />
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.CommandBindings>
                             <CommandBinding Command="Select"
                                             Executed="Review_OnExecuted" />
-                            <CommandBinding Command="{StaticResource EditCommand}"
-                                            Executed="Edit_OnExecuted" />
                         </ListView.CommandBindings>
                     </ListView>
+                    <Button Grid.Row="2"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,5,5"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                            ToolTip="MaterialDesignFloatingActionMiniAccentButton">
+                        <materialDesign:PackIcon Width="24"
+                                                 Height="24"
+                                                 Kind="ContentSave" />
+                    </Button>
                     <userControls:DialogHostControl Grid.Row="2"
                                                     userControls:DialogRegister.Register="ViewHost" />
-                    
+
                 </Grid>
             </controls:MetroTabItem>
         </controls:MetroAnimatedTabControl>
     </Grid>
 </controls:MetroWindow>
-
-
-
