@@ -47,41 +47,67 @@ namespace XSystem.Reader
         private Type _actorType = typeof(Actor);
 
         /// <summary>
-        /// 
+        /// commandbinding 路由绑定,集合路径传递
         /// </summary>
         /// <param name="sender">按钮</param>
-        /// <param name="e">传入的查询字符串（不管集合大小）</param>
+        /// <param name="e"></param>
         private void Review_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            if (e.Parameter == null) {
+            
+            if (e.Parameter == null)
+            {
                 Executor(sender, e);
             }
+            //else {
+            //    Executor(sender,);
+            //}
         }
 
+        /// <summary>
+        /// listview 点击item来源
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void EventSetter_OnHandler(object sender, MouseButtonEventArgs e)
         {
             Executor(sender, e);
         }
 
+        private FilmDetail filmDetail = new FilmDetail();
+
+        /// <summary>
+        /// 选择执行器
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Executor(object sender, RoutedEventArgs e)
         {
+            _viewModel.NameSearchString = null;
             var button = e.OriginalSource as FrameworkElement;
             var model = button.DataContext as Model;
-            _viewModel.ParentModel = model;
+            if (model is Film) {
+                filmDetail.DataContext = model;
+                _viewModel.DialogHost.RaiseDialog(filmDetail, null);
+                return;
+            }
             if (model is Actor) {
-                _viewModel.PreviewQueryable = ((Actor) model).Films.AsQueryable();
-                //_filmService.FilmsSearch(film => film.Actors.Contains(model));
                 _viewModel.PreType = _filmType;
+                _viewModel.PreviewFilmsQueryable = ((Actor) model).Films.AsQueryable();
+                //_filmService.FilmsSearch(film => film.Actors.Contains(model));
+
             }
             else if (model is Series) {
-                _viewModel.PreviewQueryable = _filmService.FilmsSearch(film => film.Series.Name == model.Name);
                 _viewModel.PreType = _filmType;
+                _viewModel.PreviewFilmsQueryable = _filmService.FilmsSearch(film => film.Series.Name == model.Name);
+                
             }
             else if (model is Publisher) {
                 var publisher = model as Publisher;
-                _viewModel.PreviewQueryable = publisher.Series.AsQueryable();
                 _viewModel.PreType = _seriesType;
+                _viewModel.PreviewSeriesQueryable = publisher.Series.AsQueryable();
             }
+            //最后才确认
+            _viewModel.ParentModel = model;
         }
     }
 

@@ -8,6 +8,7 @@
 <!--    <RoutedUICommand x:Key="SelectActorCommand"/>-->
 <!--    <RoutedUICommand x:Key="SelectFilmCommand"/>-->
     <local:ActorImgConverter x:Key="ActorImgConverter"/>
+    <local:RecommendLevelConverter x:Key="RecommendLevelConverter"/>
     <local:FilmImgConverter x:Key="FilmImgConverter"/>  
     <RoutedUICommand x:Key="EditCommand"></RoutedUICommand>
     <sys:Double x:Key="PrimaryFontSize">32</sys:Double>
@@ -45,8 +46,7 @@
                 Foreground="DodgerBlue"
                 Style="{StaticResource MainWinTextButton}"
                 Margin="5,0,0,0"
-                Command="Select"
-                CommandParameter="Films" />
+                Command="Select"/>
     </ControlTemplate>
     
     <ItemsPanelTemplate x:Key="ListBoxItemsPanelTemplate">
@@ -57,7 +57,7 @@
            x:Key="PlayButtonStyle"
            BasedOn="{StaticResource MaskImageButton}">
         <Setter Property="Background"
-                Value="LimeGreen"/>
+                Value="MediumSeaGreen"/>
         <Setter Property="VerticalAlignment"
                 Value="Bottom"/>
         <Setter Property="HorizontalAlignment"

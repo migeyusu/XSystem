@@ -17,7 +17,7 @@ namespace XSystem.Core.Domain
 
         private readonly IRepository<Publisher> _publisherRepository;
 
-        private IRepository<Series> _seriesRepository;
+        private readonly IRepository<Series> _seriesRepository;
 
         public FilmService(IRepository<Actor> actorRepository, IRepository<Film> filmRepository,
             IRepository<Publisher> publisherRepository, IWorkUnit workUnit, IRepository<Series> seriesRepository)

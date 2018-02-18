@@ -186,6 +186,10 @@
     <Compile Include="Migrations\201801291320104_BasePropertyRecommendLevel.Designer.cs">
       <DependentUpon>201801291320104_BasePropertyRecommendLevel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802091241106_AddIsOneActor.cs" />
+    <Compile Include="Migrations\201802091241106_AddIsOneActor.Designer.cs">
+      <DependentUpon>201802091241106_AddIsOneActor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -256,6 +260,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801291320104_BasePropertyRecommendLevel.resx">
       <DependentUpon>201801291320104_BasePropertyRecommendLevel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802091241106_AddIsOneActor.resx">
+      <DependentUpon>201802091241106_AddIsOneActor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

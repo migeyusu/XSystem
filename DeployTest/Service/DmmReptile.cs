@@ -18,7 +18,16 @@ namespace DeployTest.Service
     * 依据film的detail更新series和Publisher
     * 更新流：首先检查是否出现了新的Actor
     * 然后对检查每个actor的新的film
+    *
+    * 2018.2.10
+    * 根据经验，抓取和更新不是独立的，抓取方法应该同时兼顾更新
+    * 随着数据量的增加，应该避免数据载入占用大量内存以及检索的性能开销
+    * 但是由于使用了ef，比较难以实现；自定义检索数据结构——并发二叉树，但现阶段足够
+    * 多个film可能重复，去重包括手动、运行中和运行结束（依据actor）
+    * 去重方式：同一个actor的类似code，通过code相似度（超过60%）确定可疑重复，然后通过图像识别
     */
+
+
 
     public class DmmReptile : VisionReptile
     {
@@ -215,7 +224,8 @@ namespace DeployTest.Service
                             FetchedNewActors.Add(actor);
                             return actor;
                         });
-                    });
+                    })
+                    .ToList();
 
                 var codSubstring = page.Url.Substring(45, page.Url.Length - 45 - 1);
                 var groupValue = _dmmGroupRegex.Match(page.Content).Groups[1].Value;
@@ -230,7 +240,8 @@ namespace DeployTest.Service
                     Name = nameValue,
                     Code = codSubstring,
                     Characteristic = stringBuilder.ToString(),
-                    Actors = currentactors.ToList(),
+                    Actors = currentactors,
+                    IsOneActor = currentactors.Count == 1,
                     Series = series,
                     Region = Region,
                     LastUpdateTime = DateTime.Now
@@ -269,10 +280,11 @@ namespace DeployTest.Service
             Task.Run(() => {
                 var autoResetEvent = new AutoResetEvent(false);
                 IEnumerable<Actor> needFetchActors = AvailableActors
+                    .OrderByDescending(actor => actor.RecommendLevel)
                     .Where(actor => actor.IsInitialAccomplish == false)
                     .Take(interval);
                 var fetch = true;
-                while(needFetchActors.Any()&&fetch) {
+                while (needFetchActors.Any() && fetch) {
                     Console.WriteLine($"ready to fetch");
                     var starturls = needFetchActors.Select(actor => actor.FilmSearchUrl);
                     this.SeedFetchUrls = new ConcurrentBag<string>(starturls);
@@ -281,7 +293,7 @@ namespace DeployTest.Service
                     Processor.PipeEmptied += () => {
                         Processor.Stop();
                         if (Processor.ErrorUrl.Count >= 5) {
-                            Console.WriteLine("a mount of errors!");
+                            Console.WriteLine("a mount of errors! fetch stoped");
                             fetch = false;
                             return;
                         }
@@ -298,7 +310,8 @@ namespace DeployTest.Service
                     Processor.Start();
                     autoResetEvent.WaitOne();
                     Processor.Dispose();
-                } 
+                }
+                Console.WriteLine("fetch ended!");
                 autoResetEvent.Dispose();
                 endCallback?.Invoke();
             });

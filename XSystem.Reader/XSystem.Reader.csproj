@@ -156,11 +156,16 @@
     </ApplicationDefinition>
     <Compile Include="ActorImgConverter.cs" />
     <Compile Include="ControlRegister.cs" />
+    <Compile Include="FilmDetail.xaml.cs">
+      <DependentUpon>FilmDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FilmDetailViewModel.cs" />
     <Compile Include="FilmImgConverter.cs" />
     <Compile Include="FilmItem.xaml.cs">
       <DependentUpon>FilmItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Level.cs" />
+    <Compile Include="RecommendLevelConverter.cs" />
     <Compile Include="UiInstaller.cs" />
     <Compile Include="Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
@@ -168,6 +173,10 @@
     <Page Include="BaseDefination.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FilmDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FilmItem.xaml">
       <SubType>Designer</SubType>
@@ -245,6 +254,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource\media-play-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\default.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\fm.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\noimg.jpeg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -20,7 +20,7 @@
                       x:Name="MainMetroWindow"
                       d:DataContext="{d:DesignInstance local:MainWindowViewModel}"
                       Title="MainWindow"
-                      Height="600"
+                      Height="700"
                       Width="1100">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
@@ -75,7 +75,7 @@
     </controls:MetroWindow.Resources>
     <Grid Margin="10">
         <controls:MetroAnimatedTabControl>
-            <controls:MetroTabItem Header="爬虫" />
+            <!--<controls:MetroTabItem Header="爬虫" />-->
             <controls:MetroTabItem Header="查看">
                 <Grid Margin="0,10,0,0">
                     <Grid.RowDefinitions>
@@ -97,11 +97,13 @@
                                 ToolTip="delete" />
                         <customControls:SearchBox Width="200"
                                                   Margin="5,0"
-                                                  SearchPressCommand="{Binding SearchCommand}"
-                                                  CommandParameter="{Binding SearchString,RelativeSource={RelativeSource Self}}" />
+                                                  SearchString="{Binding NameSearchString,Mode=TwoWay}"
+                                                  SearchPressCommand="{Binding FlashCommand}" />
                         <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"
                                       ToolTip="by famous"
-                                      Command="{Binding UseFamousCommand}">
+                                      Margin="10,0,0,0"
+                                      Command="{Binding FlashCommand}"
+                                      IsChecked="{Binding IsOrderByFamous,Mode=TwoWay}">
                             <materialDesign:PackIcon Kind="Star"
                                                      RenderTransformOrigin=".5,.5">
                                 <materialDesign:PackIcon.RenderTransform>
@@ -145,21 +147,6 @@
                         <StackPanel x:Name="stackPanel"
                                     Height="40"
                                     Orientation="Horizontal">
-                            <!--<StackPanel.Style>
-                            <Style TargetType="{x:Type StackPanel}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ParentModel}"
-                                                 Value="{x:Null}">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource CloseSecondMenu}" />
-                                        </DataTrigger.EnterActions>
-                                        <DataTrigger.ExitActions>
-                                            <BeginStoryboard Storyboard="{StaticResource OpenSecondMenu}" />
-                                        </DataTrigger.ExitActions>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </StackPanel.Style>-->
                             <StackPanel.Resources>
                                 <Style TargetType="{x:Type TextBlock}"
                                        BasedOn="{StaticResource BaseTextBlockStyle}">
@@ -169,62 +156,93 @@
                                             Value="MediumPurple" />
                                 </Style>
                             </StackPanel.Resources>
-                            <!--                            <Button Style="{StaticResource FlatImageButton}"-->
-                            <!--                                    Width="40"-->
-                            <!--                                    CommandParameter="Actor"-->
-                            <!--                                    Command="{Binding AllMembersCommand}"-->
-                            <!--                                    ToolTip="按推荐排序">-->
-                            <!--                                <iconPacks:PackIconMaterial Kind="Star" />-->
-                            <!--                            </Button>-->
                             <Button Style="{StaticResource FlatImageButton}"
                                     Width="40"
-                                    CommandParameter="Actor"
-                                    ToolTip="附加">
-                                <iconPacks:PackIconMaterial Kind="Attachment" />
+                                    Command="{Binding PreviousHistoryCommand}"
+                                    ToolTip="previous result">
+                                <iconPacks:PackIconMaterial Kind="SkipPreviousCircleOutline" />
                             </Button>
-                            <ContentControl Content="{Binding ParentModel}">
-                                <ContentControl.Resources>
-                                    <DataTemplate DataType="{x:Type model:Series}">
-                                        <TextBlock Text="{Binding Name,StringFormat=系列:{0}}"
-                                                   Style="{StaticResource BaseTextBlockStyle}" />
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type model:Actor}">
-                                        <TextBlock Text="{Binding Name,StringFormat=演员:{0}}"
-                                                   Style="{StaticResource BaseTextBlockStyle}" />
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type model:Publisher}">
-                                        <TextBlock Text="{Binding Name,StringFormat=出版商:{0}}"
-                                                   Style="{StaticResource BaseTextBlockStyle}" />
-                                    </DataTemplate>
-                                </ContentControl.Resources>
-                            </ContentControl>
-                            <TextBlock>
+                            <StackPanel Orientation="Horizontal"
+                                        Visibility="Collapsed">
+                                <Button Style="{StaticResource FlatImageButton}"
+                                        Command="{Binding AttachFileCommand}"
+                                        Width="40"
+                                        ToolTip="attach file">
+                                    <iconPacks:PackIconMaterial Kind="File" />
+                                </Button>
+                                <TextBlock Text="独演：" />
+                                <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                              ToolTip="by famous"
+                                              Margin="10,0,0,0"
+                                              Command="{Binding FlashCommand}"
+                                              IsChecked="{Binding IsShowSingleActor,Mode=TwoWay}">
+                                    <materialDesign:PackIcon Kind="Highway"
+                                                             RenderTransformOrigin=".5,.5">
+                                        <materialDesign:PackIcon.RenderTransform>
+                                            <RotateTransform Angle="45" />
+                                        </materialDesign:PackIcon.RenderTransform>
+                                    </materialDesign:PackIcon>
+                                    <materialDesign:ToggleButtonAssist.OnContent>
+                                        <materialDesign:PackIcon Kind="Highway" />
+                                    </materialDesign:ToggleButtonAssist.OnContent>
+                                </ToggleButton>
+                                <customControls:SearchBox SearchString="{Binding CodeSearchString,Mode=TwoWay}"
+                                                          SearchPressCommand="{Binding FlashCommand}"
+                                                          Margin="10,0,0,0">
+                                    <customControls:SearchBox.SearchButtonIcon>
+                                        <Image Source="/ConciseDesign.WPF;component/ImageResources/Search-Find-48.png"
+                                               Stretch="Uniform" />
+                                    </customControls:SearchBox.SearchButtonIcon>
+                                </customControls:SearchBox>
                                 <i:Interaction.Triggers>
                                     <ei:DataTrigger Binding="{Binding PreType}"
                                                     Value="{x:Type model:Film}">
-                                        <ei:ChangePropertyAction PropertyName="Text"
-                                                                 Value="所有电影" />
-                                    </ei:DataTrigger>
-                                    <ei:DataTrigger Binding="{Binding PreType}"
-                                                    Value="{x:Type model:Series}">
-                                        <ei:ChangePropertyAction PropertyName="Text"
-                                                                 Value="所有系列" />
+                                        <ei:ChangePropertyAction PropertyName="Visibility"
+                                                                 Value="{x:Static Visibility.Visible}" />
                                     </ei:DataTrigger>
                                 </i:Interaction.Triggers>
-                            </TextBlock>
+                            </StackPanel>
+                            <!--<Button Style="{StaticResource FlatImageButton}"
+                                    Width="40"
+                                    Command="{Binding NextHistoryCommand}"
+                                    ToolTip="next result">
+                                <iconPacks:PackIconMaterial Kind="SkipNextCircleOutline" />
+                            </Button>-->
+                            <!--<Button Style="{StaticResource FlatImageButton}"
+                                    Width="40">
+                                <iconPacks:PackIconMaterial Kind="Attachment" />
+                            </Button>-->
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel.Style>
+                                    <Style TargetType="{x:Type StackPanel}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ParentModel}"
+                                                         Value="{x:Null}">
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <TextBlock Text="{Binding ParentModel.Name}"
+                                           Style="{StaticResource BaseTextBlockStyle}" />
+                                <materialDesign:RatingBar Value="{Binding ParentModel.RecommendLevel,Mode=TwoWay,Converter={StaticResource RecommendLevelConverter}}"
+                                                          VerticalAlignment="Center"
+                                                          Margin="10,0,0,0" />
+                            </StackPanel>
                         </StackPanel>
                         <StackPanel HorizontalAlignment="Right"
                                     Orientation="Horizontal">
                             <Button Style="{StaticResource FlatImageButton}"
                                     Command="{Binding PageBackwardCommand}"
                                     Width="40"
-                                    ToolTip="right">
+                                    ToolTip="previous page">
                                 <iconPacks:PackIconMaterial Kind="ArrowLeft" />
                             </Button>
                             <Button Style="{StaticResource FlatImageButton}"
                                     Command="{Binding PageNextCommand}"
                                     Width="40"
-                                    ToolTip="right">
+                                    ToolTip="next page">
                                 <iconPacks:PackIconMaterial Kind="ArrowRight" />
                             </Button>
                         </StackPanel>
@@ -236,6 +254,7 @@
                     </WrapPanel>-->
                     <ListView Grid.Row="2"
                               BorderThickness="0"
+                              SelectedItem="{Binding SelectModel}"
                               x:Name="ModelsTreeView"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               ItemsSource="{Binding BindingPageModels}">
@@ -254,19 +273,21 @@
                                                     </Rectangle.Effect>
                                                 </Rectangle>
                                                 <ContentPresenter x:Name="ContentPresenter" />
-                                                <Rectangle Fill="Black"
-                                                           Opacity="0.4"></Rectangle>
-                                                <materialDesign:RatingBar HorizontalAlignment="Center"
-                                                                          Value="{Binding RecommendLevel}"
-                                                                          x:Name="RatingBar"
-                                                                          Visibility="Collapsed" />
+                                                <Border x:Name="Rectangle"
+                                                        Opacity="0.4"
+                                                        Background="Black"
+                                                        VerticalAlignment="Top"
+                                                        Height="30"
+                                                        Visibility="Collapsed">
+                                                    <materialDesign:RatingBar Value="{Binding RecommendLevel,Mode=TwoWay,Converter={StaticResource RecommendLevelConverter}}" />
+                                                </Border>
                                             </Grid>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver"
                                                          Value="True">
-                                                    <Setter TargetName="RatingBar"
-                                                            Property="Visibility"
-                                                            Value="Visible" />
+                                                    <Setter Property="Visibility"
+                                                            Value="Visible"
+                                                            TargetName="Rectangle" />
                                                 </Trigger>
                                                 <Trigger Property="IsSelected"
                                                          Value="True">
@@ -344,10 +365,15 @@
                                             Executed="Review_OnExecuted" />
                         </ListView.CommandBindings>
                     </ListView>
+                    <ContentControl Grid.Row="2"
+                                    Content="{Binding Snackbar}"/>
+                    <!--<materialDesign:Snackbar Grid.Row="2"
+                                             MessageQueue="{materialDesign:MessageQueue}"/>-->
                     <Button Grid.Row="2"
                             VerticalAlignment="Bottom"
                             HorizontalAlignment="Right"
                             Margin="0,0,5,5"
+                            Command="{Binding SaveUpdateCommand}"
                             Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
                             ToolTip="MaterialDesignFloatingActionMiniAccentButton">
                         <materialDesign:PackIcon Width="24"
@@ -362,3 +388,18 @@
         </controls:MetroAnimatedTabControl>
     </Grid>
 </controls:MetroWindow>
+<!--<StackPanel.Style>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ParentModel}"
+                                                 Value="{x:Null}">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard Storyboard="{StaticResource CloseSecondMenu}" />
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <BeginStoryboard Storyboard="{StaticResource OpenSecondMenu}" />
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>-->

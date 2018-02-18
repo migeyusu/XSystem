@@ -131,6 +131,7 @@ namespace DeployTest
                         filmContext.SaveChanges();
                         Console.WriteLine("loop end,next....");
                     }
+                    Console.WriteLine("all ended!");
                 });
                 Console.ReadLine();
                 download = false;
@@ -160,14 +161,14 @@ namespace DeployTest
                 //    LastUpdateTime = DateTime.Now
                 //});
                 //filmContext.SaveChanges();
-                IEnumerable<Actor> actors = filmContext.Actors.ToList();
-                var enumerable = actors.Skip(100)
-                    .Take(20);
-                var take = actors.Skip(120)
-                    .Take(20);
-                Console.WriteLine(enumerable.Count());
-                Console.WriteLine(take.Count());
-                Console.WriteLine(actors.Count());
+                filmContext.Configuration.AutoDetectChangesEnabled = false;
+                foreach (var film in filmContext.Films) {
+                    film.IsOneActor = film.Actors.Count == 1;
+                }
+                filmContext.Configuration.AutoDetectChangesEnabled = true;
+                //var queryable = filmContext.Films.Where(actor => actor.IsOneActor);
+                //Console.WriteLine(queryable.Count());
+                filmContext.SaveChanges();
 
                 //                filmContext.Configuration.AutoDetectChangesEnabled = false;
                 //                foreach (var filmContextActor in filmContext.Actors) {

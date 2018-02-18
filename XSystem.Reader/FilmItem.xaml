@@ -29,9 +29,21 @@
         <Image Stretch="Uniform"
                Source="{Binding ShotTag,Mode=OneTime,Converter={StaticResource FilmImgConverter}}" />
         <Button Grid.Row="0"
-                Command="{Binding PlayCommand}"
-                Style="{StaticResource PlayButtonStyle}"/>
-        <!--<Button Grid.Row="0"
+                Command="{Binding PlayCommand}">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}"
+                       BasedOn="{StaticResource PlayButtonStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding FileLocation}"
+                                     Value="{x:Null}">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+            <!--<Button Grid.Row="0"
                 Width="40"
                 Height="40"
                 Background="DodgerBlue"
@@ -47,12 +59,12 @@
         <TextBlock Grid.Row="1"
                    Text="{Binding Name,Mode=OneTime}" 
                    Style="{StaticResource LineTextBlockStyle}"/>
-        <TextBlock Grid.Row="2"
-                   Text="{Binding Series.Name,Mode=OneTime}"
-                   Style="{StaticResource LineTextBlockStyle}">
-            <Hyperlink Command="Select"
-                       CommandParameter="{Binding Series.Films,Mode=OneTime}" />
-        </TextBlock>
+        <Button Grid.Row="2"
+                Foreground="DarkOrange"
+                DataContext="{Binding Series,Mode=OneTime}"
+                Content="{Binding Name,Mode=OneTime}"
+                Style="{StaticResource MainWinTextButton}"
+                Command="Select"/>
         <ListBox Grid.Row="3"
                  BorderThickness="0"
                  ItemsSource="{Binding MainActors,Mode=OneTime}"
@@ -67,3 +79,4 @@
         </ListBox>
     </Grid>
 </UserControl>
+

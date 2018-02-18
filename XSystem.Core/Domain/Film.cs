@@ -88,7 +88,7 @@ namespace XSystem.Core.Domain
         /// </summary>
         public string Code { get; set; }
 
-        public bool IsOneActor => Actors.Count == 1;
+        public bool IsOneActor { get; set; }
 
         public ICommand PlayCommand => new AnotherCommandImplementation((o => {
             Process.Start(FileLocation);
@@ -107,7 +107,6 @@ namespace XSystem.Core.Domain
         //        }
         //    }
         //}
-
         protected bool Equals(Film other)
         {
             return string.Equals(Name, other.Name);

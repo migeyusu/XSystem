@@ -42,7 +42,7 @@ namespace DeployTest.Service
                     _context.SaveChanges();
                     dbContextTransaction.Commit();
                 }
-                Console.WriteLine($"save success fully");
+                Console.WriteLine($"saved success.{reptile.FetchedNewFilms.Count}films {reptile.FetchedNewActors.Count}actors {reptile.FetchedNewPublishers.Count}publishers");
             }
             catch (Exception exception) {
                 var stringBuilder = new StringBuilder();

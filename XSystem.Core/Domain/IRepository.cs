@@ -11,6 +11,7 @@ namespace XSystem.Core.Domain
         void Delete(T x);
         void Delete(object id);
         void Update(T x);
+        
         T GetById(Guid id);
         IQueryable<T> Get(Expression<Func<T, bool>> filterExpression = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderByFunc = null,
