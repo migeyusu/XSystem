@@ -13,10 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployTest", "DeployTest\De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reptile", "Reptile\Reptile.csproj", "{1974E903-CE41-4A91-BEA7-90D0A7A0D4DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Car", "Car\Car.csproj", "{273C580D-A0F2-4281-A393-5669D24BAD14}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarDeploy", "CarDeploy\CarDeploy.csproj", "{A93B482D-8C58-4B4D-BAA1-4F9823A4B759}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,14 +39,6 @@ Global
 		{1974E903-CE41-4A91-BEA7-90D0A7A0D4DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1974E903-CE41-4A91-BEA7-90D0A7A0D4DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1974E903-CE41-4A91-BEA7-90D0A7A0D4DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{273C580D-A0F2-4281-A393-5669D24BAD14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{273C580D-A0F2-4281-A393-5669D24BAD14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{273C580D-A0F2-4281-A393-5669D24BAD14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{273C580D-A0F2-4281-A393-5669D24BAD14}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A93B482D-8C58-4B4D-BAA1-4F9823A4B759}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A93B482D-8C58-4B4D-BAA1-4F9823A4B759}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A93B482D-8C58-4B4D-BAA1-4F9823A4B759}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A93B482D-8C58-4B4D-BAA1-4F9823A4B759}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
